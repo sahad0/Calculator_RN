@@ -23,7 +23,6 @@ function App(): JSX.Element {
   useEffect(()=>{
 
     if(expression.length>1){
-      let temp:string='';
       let last = expression.charAt(expression.length-1);
       if(last==='+'||last==='-'||last==='*'||last==='.'||last==='/'||last==='%'){
         setOperator(expression.charAt(expression.length-1));
