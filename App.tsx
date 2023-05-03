@@ -6,10 +6,10 @@ import RNBootSplash from 'react-native-bootsplash';
 function App(): JSX.Element {
  
 
-  const [result, setResult] = useState('0');
-  const [expression, setExpression] = useState('');
-  const [operator,setOperator] = useState('');
-  const [updated,setUpdated] = useState('');
+  const [result, setResult] = useState<string>('0');
+  const [expression, setExpression] = useState<string>('');
+  const [operator,setOperator] = useState<string>('');
+  const [updated,setUpdated] = useState<string>('');
 
   useEffect(() => {
     let x = setTimeout(() => {
@@ -78,7 +78,7 @@ function App(): JSX.Element {
     if(expression.length>1){
       let temp:string='';
       let last = expression.charAt(expression.length-1);
-      
+
       if(last==='+'||last==='-'||last==='*'||last==='.'||last==='/'||last==='%'){                 //Handling case if expression ended with a symbol
         temp = expression+'0';
       }
@@ -101,6 +101,10 @@ function App(): JSX.Element {
   const handleDecimalPress = () => {
     if (result.includes('.')) return 
     setResult(result + '.');
+
+    let expressionCheck = expression.split('+' || '-' || '*' || '/' || '%');
+    if(expressionCheck.length===1 && expression[0].includes('.')) return;
+
     setExpression(result==="0" ? expression+'0.' : expression+'.');                   //DEcimal Handler
 
   };
