@@ -20,22 +20,24 @@ function App(): JSX.Element {
   }, []);
 
 
-  useEffect(()=>{
+  useEffect(()=>{                                                                             //Real Time Expression Handler
 
     if(expression.length>1){
       let last = expression.charAt(expression.length-1);
       if(last==='+'||last==='-'||last==='*'||last==='.'||last==='/'||last==='%'){
         setOperator(expression.charAt(expression.length-1));
+        const value = eval(expression.slice(0,-1));
+        setUpdated(value?value:0);
         return;
       }
     }
-      const value = handleEvaluation();
-      if(value) {
-        setUpdated(value.toString());
-      }
-      else{
-        setUpdated('')
-      }
+    const value = eval(expression);
+    if(value) {
+      setUpdated(value.toString());
+    }
+    else{
+      setUpdated('')
+    }
     
   },[result,expression]);
 
@@ -75,7 +77,8 @@ function App(): JSX.Element {
   const handleEvaluation = ():string =>{
     if(expression.length>1){
       let temp:string='';
-      let last = [...expression][expression.length-1];
+      let last = expression.charAt(expression.length-1);
+      
       if(last==='+'||last==='-'||last==='*'||last==='.'||last==='/'||last==='%'){                 //Handling case if expression ended with a symbol
         temp = expression+'0';
       }
