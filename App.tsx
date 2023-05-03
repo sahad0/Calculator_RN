@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import RNBootSplash from 'react-native-bootsplash';
 
 function App(): JSX.Element {
  
@@ -10,7 +10,13 @@ function App(): JSX.Element {
   const [expression, setExpression] = useState('');
   const [operator,setOperator] = useState('');
 
+  useEffect(() => {
+    let x = setTimeout(() => {
+      RNBootSplash.hide({fade: true});
+    }, 1000);
 
+    return ()=> clearInterval(x);
+  }, []);
 
 
   const handleNumberPress = (num:string) => {
@@ -50,7 +56,7 @@ function App(): JSX.Element {
       temp = expression+'0';
     }
     const res = eval(temp!==''?temp:expression);
-    setExpression(res.toString());
+    setExpression(res.toString());                    
   };
 
  
@@ -79,8 +85,8 @@ function App(): JSX.Element {
 
 
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.resultContainer} contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', alignItems: 'flex-end', }}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.resultContainer} contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', alignItems: 'flex-end',}}>
           <Text style={[styles.resultText]}>{expression===''?0:expression}</Text>
       </ScrollView>
       <View style={styles.buttonContainer}>
@@ -153,11 +159,11 @@ function App(): JSX.Element {
         <TouchableOpacity style={styles.button} onPress={() =>handleDecimalPress()}>
           <Text style={styles.buttonText}>.</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button,{backgroundColor:'orange'}]} onPress={() => handleEqualsPress()}>
+        <TouchableOpacity style={[styles.button,{backgroundColor:'#936CFE'}]} onPress={() => handleEqualsPress()}>
           <Text style={[styles.oButtonText,{color:"white"}]}>=</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
       )
     
 }
@@ -203,7 +209,7 @@ const styles = StyleSheet.create({
   oButtonText: {
     fontSize: 30,
     padding:10,
-    color: 'orange',
+    color: '#936CFE',
   },
   clearButton: {
     backgroundColor: '#EB3B5A',
