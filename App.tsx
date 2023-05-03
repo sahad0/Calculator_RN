@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 
 function App(): JSX.Element {
@@ -16,14 +16,13 @@ function App(): JSX.Element {
   const handleNumberPress = (num:string) => {
 
     if(result==='0' && num==='0') return;
-
-    setOperator('');
+    setOperator('');                           //Activate Operator Again
 
     if (result === '0') {
       setResult(num.toString());
       setExpression(expression + num.toString());
 
-    } else if(result.length<12) {
+    } else if(result.length<12) {                               //Limiting Length
       setResult(result + num.toString());
       setExpression(expression + num.toString());
     }
@@ -31,12 +30,13 @@ function App(): JSX.Element {
   };
 
   const handleOperatorPress = (value:string) => {
+
     if(operator===''){
-      setOperator(value);
+      setOperator(value);                         //Disable Operator unless changed
       setExpression((expression)=> expression + value);
       setResult('0');
     }
-    else if(value!=='' && value!==operator){
+    else if(value!=='' && value!==operator){              //Replace Operator
       setExpression((k)=> k.slice(0,-1)+value);
       setResult('0');
 
@@ -46,7 +46,7 @@ function App(): JSX.Element {
   const handleEqualsPress = () => {
     let temp:string='';
     let last = [...expression][expression.length-1];
-    if(last==='+'||last==='-'||last==='*'||last==='.'){
+    if(last==='+'||last==='-'||last==='*'||last==='.'){                 //Handling case if expression ended with a symbol
       temp = expression+'0';
     }
     const res = eval(temp!==''?temp:expression);
@@ -58,7 +58,7 @@ function App(): JSX.Element {
   const handleDecimalPress = () => {
     if (result.includes('.')) return 
     setResult(result + '.');
-    setExpression(result==="0" ? expression+'0.' : expression+'.');
+    setExpression(result==="0" ? expression+'0.' : expression+'.');                   //DEcimal Handler
 
   };
 
@@ -69,10 +69,33 @@ function App(): JSX.Element {
   };
 
 
+  const handleRemovePress = () =>{
+    if(expression.length>0){
+      setResult(result.slice(0, -1));
+      setExpression(expression.slice(0,-1));
+    }
+
+  }
+
+
   return (
     <View style={styles.container}>
-      <View style={[styles.resultContainer,{borderBottomColor:'lightgray',borderBottomWidth:0.3}]}>
-        <Text style={styles.resultText}>{expression===''?0:expression}</Text>
+      <ScrollView style={styles.resultContainer} contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', alignItems: 'flex-end', }}>
+          <Text style={[styles.resultText]}>{expression===''?0:expression}</Text>
+      </ScrollView>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={() => handleClearPress()}>
+          <Text style={[styles.oButtonText,{fontSize:28}]}>C</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => handleRemovePress()}>
+          <Text style={[styles.oButtonText,{fontSize:28}]}>R</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => handleOperatorPress('/')}>
+          <Text style={styles.oButtonText}>/</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => handleOperatorPress('%')}>
+          <Text style={styles.oButtonText}>%</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.buttonContainer}>
@@ -121,8 +144,8 @@ function App(): JSX.Element {
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => handleClearPress()}>
-          <Text style={styles.buttonText}>C</Text>
+        <TouchableOpacity style={styles.button} onPress={() => handleNumberPress('3.14')}>
+          <Text style={styles.buttonText}>π</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => handleNumberPress('0')}>
           <Text style={styles.buttonText}>0</Text>
@@ -147,8 +170,8 @@ const styles = StyleSheet.create({
   },
   resultContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
+    // justifyContent: 'flex-end',
+    // alignItems: 'flex-end',
     paddingRight: 10,
     paddingBottom: 10,
 
