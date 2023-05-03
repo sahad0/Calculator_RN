@@ -22,7 +22,6 @@ function App(): JSX.Element {
 
   useEffect(()=>{
     const value = handleEvaluation();
-    console.log(expression)
     if(value) {
       setUpdated(value.toString());
     }
