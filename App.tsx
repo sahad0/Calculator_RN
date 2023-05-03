@@ -21,13 +21,22 @@ function App(): JSX.Element {
 
 
   useEffect(()=>{
-    const value = handleEvaluation();
-    if(value) {
-      setUpdated(value.toString());
+
+    if(expression.length>1){
+      let temp:string='';
+      let last = expression.charAt(expression.length-1);
+      if(last==='+'||last==='-'||last==='*'||last==='.'||last==='/'||last==='%'){
+        setOperator(expression.charAt(expression.length-1));
+        return;
+      }
     }
-    else{
-      setUpdated('')
-    }
+      const value = handleEvaluation();
+      if(value) {
+        setUpdated(value.toString());
+      }
+      else{
+        setUpdated('')
+      }
     
   },[result,expression]);
 
@@ -65,13 +74,18 @@ function App(): JSX.Element {
   };
 
   const handleEvaluation = ():string =>{
-    let temp:string='';
-    let last = [...expression][expression.length-1];
-    if(last==='+'||last==='-'||last==='*'||last==='.'||last==='/'||last==='%'){                 //Handling case if expression ended with a symbol
-      temp = expression+'0';
-    }
-    const res = eval(temp!==''?temp:expression);
-    return res;                  
+    if(expression.length>1){
+      let temp:string='';
+      let last = [...expression][expression.length-1];
+      if(last==='+'||last==='-'||last==='*'||last==='.'||last==='/'||last==='%'){                 //Handling case if expression ended with a symbol
+        temp = expression+'0';
+      }
+      const res = eval(temp!==''?temp:expression);
+      return res;       
+      }   
+      else{
+        return '';
+      }        
 
   }
 
