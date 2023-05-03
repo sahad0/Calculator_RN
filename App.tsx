@@ -11,38 +11,57 @@ function App(): JSX.Element {
   const [operator,setOperator] = useState('');
 
 
-  useEffect(()=>{
-    console.log(expression);
-  },[expression]);
 
-  const handleNumberPress = (num) => {
+
+  const handleNumberPress = (num:string) => {
+
+    if(result==='0' && num==='0') return;
+
     setOperator('');
+
     if (result === '0') {
       setResult(num.toString());
-    } else {
+      setExpression(expression + num.toString());
+
+    } else if(result.length<12) {
       setResult(result + num.toString());
+      setExpression(expression + num.toString());
     }
-    setExpression(expression + num.toString());
+
   };
 
-  const handleOperatorPress = (val) => {
+  const handleOperatorPress = (value:string) => {
     if(operator===''){
-      setOperator(val);
-      setExpression((expression)=> expression + val);
+      setOperator(value);
+      setExpression((expression)=> expression + value);
       setResult('0');
     }
-    else if(val!=='' && val!==operator){
-      setExpression((k)=> k.slice(0,-1)+val);
+    else if(value!=='' && value!==operator){
+      setExpression((k)=> k.slice(0,-1)+value);
       setResult('0');
 
     }
   };
 
   const handleEqualsPress = () => {
-    const res = eval(expression);
-    // setResult(res.toString());
+    let temp:string='';
+    let last = [...expression][expression.length-1];
+    if(last==='+'||last==='-'||last==='*'||last==='.'){
+      temp = expression+'0';
+    }
+    const res = eval(temp!==''?temp:expression);
     setExpression(res.toString());
   };
+
+ 
+
+  const handleDecimalPress = () => {
+    if (result.includes('.')) return 
+    setResult(result + '.');
+    setExpression(result==="0" ? expression+'0.' : expression+'.');
+
+  };
+
 
   const handleClearPress = () => {
     setResult('0');
@@ -50,17 +69,10 @@ function App(): JSX.Element {
   };
 
 
-  const handleDecimalPress = () => {
-    if (result.includes('.')) return 
-    setResult(result + '.');
-    setExpression(expression+'.');
-
-  };
-
   return (
     <View style={styles.container}>
-      <View style={[styles.resultContainer]}>
-        <Text style={styles.resultText}>{expression}</Text>
+      <View style={[styles.resultContainer,{borderBottomColor:'lightgray',borderBottomWidth:0.3}]}>
+        <Text style={styles.resultText}>{expression===''?0:expression}</Text>
       </View>
 
       <View style={styles.buttonContainer}>
@@ -74,7 +86,7 @@ function App(): JSX.Element {
           <Text style={styles.buttonText}>9</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => handleOperatorPress('*')}>
-          <Text style={styles.buttonText}>*</Text>
+          <Text style={styles.oButtonText}>*</Text>
         </TouchableOpacity>
       </View>
 
@@ -89,7 +101,7 @@ function App(): JSX.Element {
           <Text style={styles.buttonText}>6</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => handleOperatorPress('-')}>
-          <Text style={styles.buttonText}>-</Text>
+          <Text style={styles.oButtonText}>-</Text>
         </TouchableOpacity>
       </View>
 
@@ -104,7 +116,7 @@ function App(): JSX.Element {
           <Text style={styles.buttonText}>3</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => handleOperatorPress('+')}>
-          <Text style={styles.buttonText}>+</Text>
+          <Text style={styles.oButtonText}>+</Text>
         </TouchableOpacity>
       </View>
 
@@ -118,8 +130,8 @@ function App(): JSX.Element {
         <TouchableOpacity style={styles.button} onPress={() =>handleDecimalPress()}>
           <Text style={styles.buttonText}>.</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => handleEqualsPress()}>
-          <Text style={styles.buttonText}>=</Text>
+        <TouchableOpacity style={[styles.button,{backgroundColor:'orange'}]} onPress={() => handleEqualsPress()}>
+          <Text style={[styles.oButtonText,{color:"white"}]}>=</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -139,6 +151,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     paddingRight: 10,
     paddingBottom: 10,
+
   },
   resultText: {
     fontSize: 48,
@@ -149,18 +162,25 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingBottom: 20,
     paddingHorizontal: 10,
+    
   },
   button: {
     borderRadius: 50,
     width: 60,
     height: 60,
-    backgroundColor: '#41444B',
+    backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
   },
   buttonText: {
-    fontSize: 32,
+    fontSize: 30,
+    padding:10,
     color: 'white',
+  },
+  oButtonText: {
+    fontSize: 30,
+    padding:10,
+    color: 'orange',
   },
   clearButton: {
     backgroundColor: '#EB3B5A',
