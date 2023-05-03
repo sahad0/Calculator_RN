@@ -9,6 +9,7 @@ function App(): JSX.Element {
   const [result, setResult] = useState('0');
   const [expression, setExpression] = useState('');
   const [operator,setOperator] = useState('');
+  const [updated,setUpdated] = useState('');
 
   useEffect(() => {
     let x = setTimeout(() => {
@@ -17,6 +18,19 @@ function App(): JSX.Element {
 
     return ()=> clearInterval(x);
   }, []);
+
+
+  useEffect(()=>{
+    const value = handleEvaluation();
+    console.log(expression)
+    if(value) {
+      setUpdated(value.toString());
+    }
+    else{
+      setUpdated('')
+    }
+    
+  },[result,expression]);
 
 
   const handleNumberPress = (num:string) => {
@@ -37,6 +51,8 @@ function App(): JSX.Element {
 
   const handleOperatorPress = (value:string) => {
 
+    if(expression==='') return 
+
     if(operator===''){
       setOperator(value);                         //Disable Operator unless changed
       setExpression((expression)=> expression + value);
@@ -49,14 +65,20 @@ function App(): JSX.Element {
     }
   };
 
-  const handleEqualsPress = () => {
+  const handleEvaluation = ():string =>{
     let temp:string='';
     let last = [...expression][expression.length-1];
-    if(last==='+'||last==='-'||last==='*'||last==='.'){                 //Handling case if expression ended with a symbol
+    if(last==='+'||last==='-'||last==='*'||last==='.'||last==='/'||last==='%'){                 //Handling case if expression ended with a symbol
       temp = expression+'0';
     }
     const res = eval(temp!==''?temp:expression);
-    setExpression(res.toString());                    
+    return res;                  
+
+  }
+
+  const handleEqualsPress = () => {
+    const finalValue = handleEvaluation();
+    setExpression(finalValue.toString());  
   };
 
  
@@ -72,6 +94,7 @@ function App(): JSX.Element {
   const handleClearPress = () => {
     setResult('0');
     setExpression('');
+    setUpdated('');
   };
 
 
@@ -89,6 +112,12 @@ function App(): JSX.Element {
       <ScrollView style={styles.resultContainer} contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', alignItems: 'flex-end',}}>
           <Text style={[styles.resultText]}>{expression===''?0:expression}</Text>
       </ScrollView>
+
+      <View >
+          <Text style={[{fontSize:28,color:'gray',alignSelf:'flex-end',margin:30}]}>{updated}</Text>
+
+      </View>
+
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={() => handleClearPress()}>
           <Text style={[styles.oButtonText,{fontSize:28}]}>C</Text>
@@ -172,7 +201,7 @@ function App(): JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: '#000000',
   },
   resultContainer: {
     flex: 1,
@@ -204,7 +233,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 30,
     padding:10,
-    color: 'white',
+    color: 'lightgray',
   },
   oButtonText: {
     fontSize: 30,
